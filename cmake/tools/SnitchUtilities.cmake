@@ -22,7 +22,7 @@
 function(generate_hw_headers)
   # Use a default for clustergen.py if not already defined.
   if(NOT DEFINED CLUSTER_GEN_PY)
-    set(CLUSTER_GEN_PY "${CMAKE_CURRENT_SOURCE_DIR}/scripts/clustergen.py")
+  set(CLUSTER_GEN_PY "${SNITCH_ROOT_DIR}/scripts/clustergen.py")
   endif()
 
   file(GLOB TEMPLATE_FILES CONFIGURE_DEPENDS "${SN_TEMPLATE_DIR}/*.tpl")
@@ -66,6 +66,7 @@ function(generate_peripheral_header)
   # Get the register interface path from Bender.
   execute_process(
     COMMAND ${BENDER} path register_interface
+    WORKING_DIRECTORY ${SNITCH_ROOT_DIR}
     OUTPUT_VARIABLE REGISTER_INTERFACE_PATH
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
@@ -76,7 +77,7 @@ function(generate_peripheral_header)
     OUTPUT "${SN_PERIPH_HEADER}"
     COMMAND ${Python3_EXECUTABLE} ${REGGEN} -D -o "${SN_PERIPH_HEADER}" "${SN_PERIPH_REG_CFG}"
     DEPENDS "${SN_PERIPH_REG_CFG}"
-    COMMENT "[REGGEN] Generating snitch_cluster_peripheral.h from ${SN_PERIPH_REG_CFG}"
+    COMMENT "[SNITCH-SDK] Generating snitch_cluster_peripheral.h from ${SN_PERIPH_REG_CFG}"
   )
 
   add_custom_target(generate_snitch_cluster_peripheral_header ALL
