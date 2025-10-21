@@ -35,7 +35,7 @@ inline uint32_t snrt_l1_start_addr() {
 }
 
 inline uint32_t snrt_l1_end_addr() {
-  return CLUSTER_PERIPH_BASE_ADDR + cluster_base_offset();
+  return CLUSTER_BOOTROM_BASE_ADDR + cluster_base_offset();
 }
 
 static inline volatile uint32_t *snrt_cluster_clint_set_ptr() {
