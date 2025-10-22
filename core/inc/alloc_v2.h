@@ -28,7 +28,7 @@ static inline snrt_allocator_t *snrt_l1_allocator_v2() {
  *
  * @return The next pointer of the L1 allocator.
  */
-inline void *snrt_l1_next_v2() {
+static inline void *snrt_l1_next_v2() {
   return (void *)(uintptr_t)snrt_l1_allocator_v2()->next;
 }
 
@@ -37,7 +37,7 @@ inline void *snrt_l1_next_v2() {
  *
  * @param next The new value for the next pointer.
  */
-inline void snrt_l1_update_next_v2(void *next) {
+static inline void snrt_l1_update_next_v2(void *next) {
   snrt_l1_allocator_v2()->next = (uintptr_t)next;
 }
 
@@ -61,7 +61,7 @@ static inline void snrt_l1_alloc_check_bounds() {
  * @param alignment The alignment of the allocation.
  * @return Pointer to the allocated variable.
  */
-inline void *snrt_l1_alloc_cluster_local(size_t size, const size_t alignment) {
+static inline void *snrt_l1_alloc_cluster_local(size_t size, const size_t alignment) {
   snrt_l1_allocator_v2()->next =
       ALIGN_UP(snrt_l1_allocator_v2()->next, alignment);
   void *retval = snrt_l1_next_v2();
@@ -83,7 +83,7 @@ inline void *snrt_l1_alloc_cluster_local(size_t size, const size_t alignment) {
  * @return Pointer to the allocated variable for each compute core.
  *         The return value for the DM core is undefined.
  */
-inline void *snrt_l1_alloc_compute_core_local(size_t size,
+static inline void *snrt_l1_alloc_compute_core_local(size_t size,
                                               const size_t alignment) {
   snrt_l1_allocator_v2()->next =
       ALIGN_UP(snrt_l1_allocator_v2()->next, alignment);
@@ -106,7 +106,7 @@ inline void *snrt_l1_alloc_compute_core_local(size_t size,
  * @param size The size of the variable.
  * @return Pointer to the same variable allocated by the specified core.
  */
-inline void *snrt_compute_core_local_ptr(void *ptr, uint32_t core_idx,
+static inline void *snrt_compute_core_local_ptr(void *ptr, uint32_t core_idx,
                                          size_t size) {
   size_t offset = (core_idx - snrt_cluster_core_idx()) * size;
   return (void *)((uintptr_t)ptr + offset);
@@ -124,7 +124,7 @@ inline void *snrt_compute_core_local_ptr(void *ptr, uint32_t core_idx,
  * @param dst_cluster_idx Index of the destination cluster.
  * @return Pointer to the same offset in the destination cluster's L1 memory.
  */
-inline void *snrt_remote_l1_ptr(void *ptr, uint32_t src_cluster_idx,
+static inline void *snrt_remote_l1_ptr(void *ptr, uint32_t src_cluster_idx,
                                 uint32_t dst_cluster_idx) {
   return (void *)((uintptr_t)ptr +
                   (dst_cluster_idx - src_cluster_idx) * SNRT_CLUSTER_OFFSET);
@@ -139,7 +139,7 @@ inline void *snrt_remote_l1_ptr(void *ptr, uint32_t src_cluster_idx,
  * @note This function should be called before using any of the allocation
  *       functions.
  */
-inline void snrt_alloc_init_v2() {
+static inline void snrt_alloc_init_v2() {
   // Calculate end address of the heap. The top of the TCDM address space is
   // reserved for the cluster-local storage (CLS) and the stack of every
   // core. We further provision a safety margin of 128B. The rest of the

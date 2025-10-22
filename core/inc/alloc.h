@@ -11,15 +11,15 @@
 
 extern snrt_allocator_t l3_allocator;
 
-inline snrt_allocator_t *snrt_l1_allocator() {
+static inline snrt_allocator_t *snrt_l1_allocator() {
   return (snrt_allocator_t *)&(cls()->l1_allocator);
 }
 
-inline snrt_allocator_t *snrt_l3_allocator() { return &l3_allocator; }
+static inline snrt_allocator_t *snrt_l3_allocator() { return &l3_allocator; }
 
-inline void *snrt_l1_next() { return (void *)snrt_l1_allocator()->next; }
+static inline void *snrt_l1_next() { return (void *)snrt_l1_allocator()->next; }
 
-inline void *snrt_l3_next() { return (void *)snrt_l3_allocator()->next; }
+static inline void *snrt_l3_next() { return (void *)snrt_l3_allocator()->next; }
 
 /**
  * @brief Allocate a chunk of memory in the L1 memory
@@ -28,7 +28,7 @@ inline void *snrt_l3_next() { return (void *)snrt_l3_allocator()->next; }
  * @param size number of bytes to allocate
  * @return pointer to the allocated memory
  */
-inline void *snrt_l1_alloc(size_t size) {
+static inline void *snrt_l1_alloc(size_t size) {
   snrt_allocator_t *alloc = snrt_l1_allocator();
 
   // TODO colluca: do we need this? What does it imply?
@@ -52,7 +52,7 @@ inline void *snrt_l1_alloc(size_t size) {
 /**
  * @brief Override the L1 allocator next pointer
  */
-inline void snrt_l1_update_next(void *next) {
+static inline void snrt_l1_update_next(void *next) {
   snrt_allocator_t *alloc = snrt_l1_allocator();
   alloc->next = (uint32_t)next;
 }
@@ -64,7 +64,7 @@ inline void snrt_l1_update_next(void *next) {
  * @param size number of bytes to allocate
  * @return pointer to the allocated memory
  */
-inline void *snrt_l3_alloc(size_t size) {
+static inline void *snrt_l3_alloc(size_t size) {
   snrt_allocator_t *alloc = snrt_l3_allocator();
 
   // TODO: L3 alloc size check
@@ -74,7 +74,7 @@ inline void *snrt_l3_alloc(size_t size) {
   return ret;
 }
 
-inline void snrt_alloc_init() {
+static inline void snrt_alloc_init() {
   // Only one core per cluster has to initialize the L1 allocator
   if (snrt_is_dm_core()) {
     // Initialize L1 allocator

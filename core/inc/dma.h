@@ -34,7 +34,7 @@ typedef uint32_t snrt_dma_txid_t;
  * @param size The size of the transfer in bytes.
  * @return The DMA transfer ID.
  */
-inline uint32_t snrt_dma_start_1d_wideptr(uint64_t dst, uint64_t src,
+static inline uint32_t snrt_dma_start_1d_wideptr(uint64_t dst, uint64_t src,
                                           size_t size) {
   register uint32_t reg_dst_low asm("a0") = dst >> 0;   // 10
   register uint32_t reg_dst_high asm("a1") = dst >> 32; // 11
@@ -70,7 +70,7 @@ inline uint32_t snrt_dma_start_1d_wideptr(uint64_t dst, uint64_t src,
  * @param size The size of the transfer in bytes.
  * @return The DMA transfer ID.
  */
-inline snrt_dma_txid_t snrt_dma_start_1d(void *dst, const void *src,
+static inline snrt_dma_txid_t snrt_dma_start_1d(void *dst, const void *src,
                                          size_t size) {
   return snrt_dma_start_1d_wideptr((size_t)dst, (size_t)src, size);
 }
@@ -87,7 +87,7 @@ inline snrt_dma_txid_t snrt_dma_start_1d(void *dst, const void *src,
  * @param repeat The number of 1D transfers composing the 2D transfer.
  * @return The DMA transfer ID.
  */
-inline snrt_dma_txid_t snrt_dma_start_2d_wideptr(uint64_t dst, uint64_t src,
+static inline snrt_dma_txid_t snrt_dma_start_2d_wideptr(uint64_t dst, uint64_t src,
                                                  size_t size, size_t dst_stride,
                                                  size_t src_stride,
                                                  size_t repeat) {
@@ -143,7 +143,7 @@ inline snrt_dma_txid_t snrt_dma_start_2d_wideptr(uint64_t dst, uint64_t src,
  * @param repeat The number of 1D transfers composing the 2D transfer.
  * @return The DMA transfer ID.
  */
-inline snrt_dma_txid_t snrt_dma_start_2d(void *dst, const void *src,
+static inline snrt_dma_txid_t snrt_dma_start_2d(void *dst, const void *src,
                                          size_t size, size_t dst_stride,
                                          size_t src_stride, size_t repeat) {
   return snrt_dma_start_2d_wideptr((size_t)dst, (size_t)src, size, dst_stride,
@@ -292,7 +292,7 @@ snrt_dma_start_2d_channel(void *dst, const void *src, size_t size,
  * @brief Block until a DMA transfer finishes.
  * @param dst The DMA transfer ID.
  */
-inline void snrt_dma_wait(snrt_dma_txid_t tid) {
+static inline void snrt_dma_wait(snrt_dma_txid_t tid) {
   // dmstati t0, 0  # 0=status.completed_id
   asm volatile("1: \n"
                ".word %0\n"
@@ -306,7 +306,7 @@ inline void snrt_dma_wait(snrt_dma_txid_t tid) {
  * @brief Block until a DMA transfer finishes on a specific channel.
  * @param dst The DMA transfer ID.
  */
-inline void snrt_dma_wait_channel(snrt_dma_txid_t tid, uint32_t channel) {
+static inline void snrt_dma_wait_channel(snrt_dma_txid_t tid, uint32_t channel) {
   // dmstati t0, 0  # 0=status.completed_id
   register uint32_t cfg asm("t1") = channel << 2;
   asm volatile("1: \n"
@@ -321,7 +321,7 @@ inline void snrt_dma_wait_channel(snrt_dma_txid_t tid, uint32_t channel) {
 /**
  * @brief Block until all DMA operation ceases.
  */
-inline void snrt_dma_wait_all() {
+static inline void snrt_dma_wait_all() {
   // dmstati t0, 2  # 2=status.busy
   asm volatile("1: \n"
                ".word %0\n"
@@ -364,7 +364,7 @@ static inline void snrt_dma_wait_all_channels(uint32_t num_channels) {
  * analyzed.
  * @deprecated
  */
-inline void snrt_dma_start_tracking() {
+static inline void snrt_dma_start_tracking() {
   // dmstati zero, 0
   asm volatile(".word %0\n" ::"i"(
       R_TYPE_ENCODE(DMSTATI_FUNCT7, 0b00, 0, XDMA_FUNCT3, 0, OP_CUSTOM1)));
@@ -376,7 +376,7 @@ inline void snrt_dma_start_tracking() {
  * analyzed.
  * @deprecated
  */
-inline void snrt_dma_stop_tracking() {
+static inline void snrt_dma_stop_tracking() {
   asm volatile(".word %0\n" ::"i"(
       R_TYPE_ENCODE(DMSTATI_FUNCT7, 0b00, 0, XDMA_FUNCT3, 3, OP_CUSTOM1)));
 }
@@ -387,7 +387,7 @@ inline void snrt_dma_stop_tracking() {
  * @param value Value to set.
  * @param len Number of bytes, must be a multiple of the DMA bus width.
  */
-inline void snrt_dma_memset(void *ptr, uint8_t value, uint32_t len) {
+static inline void snrt_dma_memset(void *ptr, uint8_t value, uint32_t len) {
   // set first 64bytes to value
   // memset(ptr, value, 64);
   uint8_t *p = ptr;
@@ -410,7 +410,7 @@ inline void snrt_dma_memset(void *ptr, uint8_t value, uint32_t len) {
  * @param tile_size Number of elements within a tile of the 1D array.
  * @param prec Number of bytes of each element in the 1D array.
  */
-inline snrt_dma_txid_t snrt_dma_load_1d_tile(void *dst, void *src,
+static inline snrt_dma_txid_t snrt_dma_load_1d_tile(void *dst, void *src,
                                              size_t tile_idx, size_t tile_size,
                                              uint32_t prec) {
   size_t tile_nbytes = tile_size * prec;
@@ -425,7 +425,7 @@ inline snrt_dma_txid_t snrt_dma_load_1d_tile(void *dst, void *src,
  * @param tile_size Number of elements within a tile of the 1D array.
  * @param prec Number of bytes of each element in the 1D array.
  */
-inline snrt_dma_txid_t snrt_dma_store_1d_tile(void *dst, void *src,
+static inline snrt_dma_txid_t snrt_dma_store_1d_tile(void *dst, void *src,
                                               size_t tile_idx, size_t tile_size,
                                               uint32_t prec) {
   size_t tile_nbytes = tile_size * prec;
@@ -446,7 +446,7 @@ inline snrt_dma_txid_t snrt_dma_store_1d_tile(void *dst, void *src,
  *                     array.
  * @param prec Number of bytes of each element in the 2D array.
  */
-inline snrt_dma_txid_t
+static inline snrt_dma_txid_t
 snrt_dma_load_2d_tile(void *dst, void *src, size_t tile_x1_idx,
                       size_t tile_x0_idx, size_t tile_x1_size,
                       size_t tile_x0_size, size_t full_x0_size, uint32_t prec) {
@@ -479,7 +479,7 @@ snrt_dma_load_2d_tile(void *dst, void *src, size_t tile_x1_idx,
  *                     array.
  * @param prec Number of bytes of each element in the 2D array.
  */
-inline snrt_dma_txid_t
+static inline snrt_dma_txid_t
 snrt_dma_store_2d_tile(void *dst, void *src, size_t tile_x1_idx,
                        size_t tile_x0_idx, size_t tile_x1_size,
                        size_t tile_x0_size, size_t full_x0_size,

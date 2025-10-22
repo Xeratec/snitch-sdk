@@ -30,7 +30,7 @@ typedef struct {
  *
  * @return perf_regs_t* Pointer to the performance counter registers
  */
-inline perf_regs_t *snrt_perf_counters() {
+static inline perf_regs_t *snrt_perf_counters() {
   return (perf_regs_t *)snrt_cluster_perf_counters_addr();
 }
 
@@ -41,7 +41,7 @@ inline perf_regs_t *snrt_perf_counters() {
  * @param metric The metric value to set for the performance counter.
  * @param hart The hart value to set for the performance counter.
  */
-inline void snrt_cfg_perf_counter(uint32_t perf_cnt, uint16_t metric,
+static inline void snrt_cfg_perf_counter(uint32_t perf_cnt, uint16_t metric,
                                   uint16_t hart) {
   snrt_perf_counters()->select[perf_cnt].value = (metric << 16) | hart;
 }
@@ -51,7 +51,7 @@ inline void snrt_cfg_perf_counter(uint32_t perf_cnt, uint16_t metric,
  *
  * @param perf_cnt The index of the performance counter to start.
  */
-inline void snrt_start_perf_counter(uint32_t perf_cnt) {
+static inline void snrt_start_perf_counter(uint32_t perf_cnt) {
   snrt_perf_counters()->enable[perf_cnt].value = 0x1;
 }
 
@@ -60,7 +60,7 @@ inline void snrt_start_perf_counter(uint32_t perf_cnt) {
  *
  * @param perf_cnt The index of the performance counter to stop.
  */
-inline void snrt_stop_perf_counter(uint32_t perf_cnt) {
+static inline void snrt_stop_perf_counter(uint32_t perf_cnt) {
   snrt_perf_counters()->enable[perf_cnt].value = 0x0;
 }
 
@@ -69,7 +69,7 @@ inline void snrt_stop_perf_counter(uint32_t perf_cnt) {
  *
  * @param perf_cnt The index of the performance counter to reset.
  */
-inline void snrt_reset_perf_counter(uint32_t perf_cnt) {
+static inline void snrt_reset_perf_counter(uint32_t perf_cnt) {
   snrt_perf_counters()->perf_counter[perf_cnt].value = 0x0;
 }
 
@@ -80,6 +80,6 @@ inline void snrt_reset_perf_counter(uint32_t perf_cnt) {
  * from.
  * @return The value of the specified performance counter.
  */
-inline uint32_t snrt_get_perf_counter(uint32_t perf_cnt) {
+static inline uint32_t snrt_get_perf_counter(uint32_t perf_cnt) {
   return snrt_perf_counters()->perf_counter[perf_cnt].value;
 }

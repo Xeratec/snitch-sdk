@@ -29,7 +29,7 @@ void snrt_exit(int exit_code);
 #endif /* SNRT_CRT0_EXIT */
 
 #ifdef SNRT_INIT_CLS
-inline uint32_t snrt_cls_base_addr() {
+static inline uint32_t snrt_cls_base_addr() {
   extern volatile uint32_t __cdata_start, __cdata_end;
   extern volatile uint32_t __cbss_start, __cbss_end;
   uint32_t cdata_size = ((uint32_t)&__cdata_end) - ((uint32_t)&__cdata_start);

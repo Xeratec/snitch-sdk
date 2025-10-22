@@ -30,11 +30,11 @@ static inline uint32_t cluster_base_offset() {
   return snrt_cluster_idx() * SNRT_CLUSTER_OFFSET;
 }
 
-inline uint32_t snrt_l1_start_addr() {
+static inline uint32_t snrt_l1_start_addr() {
   return CLUSTER_TCDM_BASE_ADDR + cluster_base_offset();
 }
 
-inline uint32_t snrt_l1_end_addr() {
+static inline uint32_t snrt_l1_end_addr() {
   return CLUSTER_BOOTROM_BASE_ADDR + cluster_base_offset();
 }
 
@@ -50,6 +50,6 @@ static inline uint32_t snrt_cluster_perf_counters_addr() {
   return CLUSTER_PERF_COUNTER_ADDR + cluster_base_offset();
 }
 
-inline volatile uint32_t *snrt_zero_memory_ptr() {
+static inline volatile uint32_t *snrt_zero_memory_ptr() {
   return (uint32_t *)(CLUSTER_ZERO_MEM_START_ADDR + cluster_base_offset());
 }

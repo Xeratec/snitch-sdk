@@ -6,14 +6,14 @@
 
 #include <stdint.h>
 
-inline uint32_t __attribute__((const)) snrt_l1_start_addr();
+static inline uint32_t __attribute__((const)) snrt_l1_start_addr();
 
-inline uint32_t __attribute__((const)) snrt_l1_end_addr();
+static inline uint32_t __attribute__((const)) snrt_l1_end_addr();
 
-inline volatile uint32_t *__attribute__((const)) snrt_clint_mutex_ptr();
+static inline volatile uint32_t *__attribute__((const)) snrt_clint_mutex_ptr();
 
-inline volatile uint32_t *__attribute__((const)) snrt_clint_msip_ptr();
+static inline volatile uint32_t *__attribute__((const)) snrt_clint_msip_ptr();
 
-inline volatile uint32_t *__attribute__((const)) snrt_cluster_clint_set_ptr();
+static inline volatile uint32_t *__attribute__((const)) snrt_cluster_clint_set_ptr();
 
-inline volatile uint32_t *__attribute__((const)) snrt_cluster_clint_clr_ptr();
+static inline volatile uint32_t *__attribute__((const)) snrt_cluster_clint_clr_ptr();

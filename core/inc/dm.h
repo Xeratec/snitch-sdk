@@ -149,7 +149,7 @@ static inline void wake_dm(void) {
  * functions
  *
  */
-inline void dm_init(void) {
+static inline void dm_init(void) {
   // create a data mover instance
   if (snrt_is_dm_core()) {
 #ifdef DM_USE_GLOBAL_CLINT
@@ -171,7 +171,7 @@ inline void dm_init(void) {
  * @brief data mover main function
  * @details
  */
-inline void dm_main(void) {
+static inline void dm_main(void) {
   volatile dm_task_t *t;
   uint32_t do_exit = 0;
   uint32_t cluster_core_idx = snrt_cluster_core_idx();
@@ -242,7 +242,7 @@ inline void dm_main(void) {
  * @brief Send the data mover to exit()
  * @details
  */
-inline void dm_exit(void) {
+static inline void dm_exit(void) {
   dm_p->stat_q = STAT_EXIT;
   // signal data mover
   wake_dm();
@@ -258,7 +258,7 @@ inline void dm_exit(void) {
  * @param n number of bytes to copy
  * @return transfer ID
  */
-inline void dm_memcpy_async(void *dest, const void *src, size_t n) {
+static inline void dm_memcpy_async(void *dest, const void *src, size_t n) {
   uint32_t s;
   volatile dm_task_t *t;
 
@@ -298,7 +298,7 @@ inline void dm_memcpy_async(void *dest, const void *src, size_t n) {
  * @param nreps number of repetitions in outer dimension
  * @param cfg DMA configuration
  */
-inline void dm_memcpy2d_async(uint64_t src, uint64_t dst, uint32_t size,
+static inline void dm_memcpy2d_async(uint64_t src, uint64_t dst, uint32_t size,
                               uint32_t sstrd, uint32_t dstrd, uint32_t nreps,
                               uint32_t cfg) {
   uint32_t s;
@@ -335,13 +335,13 @@ inline void dm_memcpy2d_async(uint64_t src, uint64_t dst, uint32_t size,
  * @brief Trigger the start of queued transfers and exit immediately
  *
  */
-inline void dm_start(void) { wake_dm(); }
+static inline void dm_start(void) { wake_dm(); }
 
 /**
  * @brief Wait for all DMA transfers to complete
  * @details
  */
-inline void dm_wait(void) {
+static inline void dm_wait(void) {
   uint32_t s;
 
   // signal data mover
@@ -372,7 +372,7 @@ inline void dm_wait(void) {
  * @brief Wait for the DM core to be ready
  * @details
  */
-inline void dm_wait_ready(void) {
+static inline void dm_wait_ready(void) {
   _dm_mtx_lock();
   dm_p->stat_pvalid = 0;
   dm_p->stat_q = STAT_READY;

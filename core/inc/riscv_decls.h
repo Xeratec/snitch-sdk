@@ -10,10 +10,10 @@ static inline void snrt_wfi();
 
 static inline uint32_t snrt_mcycle();
 
-inline void snrt_interrupt_enable(uint32_t irq);
+static inline void snrt_interrupt_enable(uint32_t irq);
 
-inline void snrt_interrupt_disable(uint32_t irq);
+static inline void snrt_interrupt_disable(uint32_t irq);
 
-inline void snrt_interrupt_global_enable(void);
+static inline void snrt_interrupt_global_enable(void);
 
-inline void snrt_interrupt_global_disable(void);
+static inline void snrt_interrupt_global_disable(void);

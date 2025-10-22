@@ -23,7 +23,7 @@
 /**
  * @brief Synchronize the integer and float pipelines.
  */
-inline void snrt_fpu_fence() {
+static inline void snrt_fpu_fence() {
   unsigned tmp;
   asm volatile("fmv.x.w %0, fa0\n"
                "mv      %0, %0\n"
@@ -65,7 +65,7 @@ enum {
 /**
  * @brief Enable all SSRs.
  */
-inline void snrt_ssr_enable() {
+static inline void snrt_ssr_enable() {
 #ifdef __TOOLCHAIN_LLVM__
   __builtin_ssr_enable();
 #else
@@ -76,7 +76,7 @@ inline void snrt_ssr_enable() {
 /**
  * @brief Disable all SSRs.
  */
-inline void snrt_ssr_disable() {
+static inline void snrt_ssr_disable() {
 #ifdef __TOOLCHAIN_LLVM__
   __builtin_ssr_disable();
 #else
@@ -90,7 +90,7 @@ inline void snrt_ssr_disable() {
  * @param dm The SSR index.
  * @return The value of the register.
  */
-inline uint32_t read_ssr_cfg(uint32_t reg, uint32_t dm) {
+static inline uint32_t read_ssr_cfg(uint32_t reg, uint32_t dm) {
   uint32_t value;
   asm volatile("scfgri %[value], %[dm] | %[reg]<<5\n"
                : [value] "=r"(value)
@@ -104,7 +104,7 @@ inline uint32_t read_ssr_cfg(uint32_t reg, uint32_t dm) {
  * @param dm The SSR index.
  * @param value The value to write.
  */
-inline void write_ssr_cfg(uint32_t reg, uint32_t dm, uint32_t value) {
+static inline void write_ssr_cfg(uint32_t reg, uint32_t dm, uint32_t value) {
   asm volatile("scfgwi %[value], %[dm] | %[reg]<<5\n" ::[value] "r"(value),
                [dm] "i"(dm), [reg] "i"(reg));
 }
@@ -115,7 +115,7 @@ inline void write_ssr_cfg(uint32_t reg, uint32_t dm, uint32_t value) {
  * @param b0 The bound of the loop.
  * @param s0 The stride of the loop.
  */
-inline void snrt_ssr_loop_1d(enum snrt_ssr_dm dm, size_t b0, size_t s0) {
+static inline void snrt_ssr_loop_1d(enum snrt_ssr_dm dm, size_t b0, size_t s0) {
   --b0;
   write_ssr_cfg(REG_BOUNDS + 0, dm, b0);
   size_t a = 0;
@@ -131,7 +131,7 @@ inline void snrt_ssr_loop_1d(enum snrt_ssr_dm dm, size_t b0, size_t s0) {
  * @param s0 The stride of the first loop.
  * @param s1 The stride of the second loop.
  */
-inline void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
+static inline void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
                              size_t s0, size_t s1) {
   --b0;
   --b1;
@@ -154,7 +154,7 @@ inline void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
  * @param s1 The stride of the second loop.
  * @param s2 The stride of the third loop.
  */
-inline void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
+static inline void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
                              size_t b2, size_t s0, size_t s1, size_t s2) {
   --b0;
   --b1;
@@ -183,7 +183,7 @@ inline void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
  * @param s2 The stride of the third loop.
  * @param s3 The stride of the fourth loop.
  */
-inline void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
+static inline void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
                              size_t b2, size_t b3, size_t s0, size_t s1,
                              size_t s2, size_t s3) {
   --b0;
@@ -210,7 +210,7 @@ inline void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
  * @param dm The SSR index.
  * @param count The repetition count.
  */
-inline void snrt_ssr_repeat(enum snrt_ssr_dm dm, size_t count) {
+static inline void snrt_ssr_repeat(enum snrt_ssr_dm dm, size_t count) {
   write_ssr_cfg(REG_REPEAT, dm, count - 1);
 }
 
@@ -220,7 +220,7 @@ inline void snrt_ssr_repeat(enum snrt_ssr_dm dm, size_t count) {
  * @param dim The number of dimensions to use.
  * @param ptr The pointer to the data.
  */
-inline void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
+static inline void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
                           volatile void *ptr) {
   write_ssr_cfg(REG_RPTR + dim, dm, (uintptr_t)ptr);
 }
@@ -231,7 +231,7 @@ inline void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
  * @param dim The number of dimensions to use.
  * @param ptr The pointer to the data.
  */
-inline void snrt_ssr_write(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
+static inline void snrt_ssr_write(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
                            volatile void *ptr) {
   write_ssr_cfg(REG_WPTR + dim, dm, (uintptr_t)ptr);
 }

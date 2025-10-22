@@ -136,34 +136,34 @@ static inline void worker_wfi(uint32_t cluster_core_idx) {
  * @brief Debugging info to printf
  * @details
  */
-inline void eu_print_status() {
+static inline void eu_print_status() {
   EU_PRINTF(0, "workers_in_loop=%d\n", eu_p->workers_in_loop);
 }
 
 /**
  * @brief Acquires the event unit mutex, exits only on success
  */
-inline void eu_mutex_lock() { snrt_mutex_acquire(&eu_p->workers_mutex); }
+static inline void eu_mutex_lock() { snrt_mutex_acquire(&eu_p->workers_mutex); }
 
 /**
  * @brief Releases the acquired mutex
  */
-inline void eu_mutex_release() { snrt_mutex_release(&eu_p->workers_mutex); }
+static inline void eu_mutex_release() { snrt_mutex_release(&eu_p->workers_mutex); }
 
 /**
  * Getters
  */
-inline uint32_t eu_get_workers_in_loop() {
+static inline uint32_t eu_get_workers_in_loop() {
   return __atomic_load_n(&eu_p->workers_in_loop, __ATOMIC_RELAXED);
 }
-inline uint32_t eu_get_workers_in_wfi() {
+static inline uint32_t eu_get_workers_in_wfi() {
   return __atomic_load_n(&eu_p->workers_wfi, __ATOMIC_RELAXED);
 }
 
 /**
  * @brief Initialize the event unit
  */
-inline void eu_init(void) {
+static inline void eu_init(void) {
   if (snrt_cluster_core_idx() == 0) {
     // Allocate the eu struct in L1 for fast access
     eu_p = snrt_l1_alloc(sizeof(eu_t));
@@ -181,7 +181,7 @@ inline void eu_init(void) {
  * @brief send all workers in loop to exit()
  * @param core_idx cluster-local core index
  */
-inline void eu_exit(uint32_t core_idx) {
+static inline void eu_exit(uint32_t core_idx) {
   // make sure queue is empty
   if (!eu_p->e.nthreads)
     eu_run_empty(core_idx);
@@ -196,7 +196,7 @@ inline void eu_exit(uint32_t core_idx) {
  *
  * @param cluster_core_idx cluster-local core index
  */
-inline void eu_event_loop(uint32_t cluster_core_idx) {
+static inline void eu_event_loop(uint32_t cluster_core_idx) {
   uint32_t scratch;
   uint32_t nthds;
 
@@ -250,7 +250,7 @@ inline void eu_event_loop(uint32_t cluster_core_idx) {
  * @param argc number of elements in data
  * @param nthreads number of threads that have to execute this event
  */
-inline int eu_dispatch_push(void (*fn)(void *, uint32_t), uint32_t argc,
+static inline int eu_dispatch_push(void (*fn)(void *, uint32_t), uint32_t argc,
                             void *data, uint32_t nthreads) {
   // wait for workers to be in wfi before manipulating the event struct
   wait_worker_wfi();
@@ -271,7 +271,7 @@ inline int eu_dispatch_push(void (*fn)(void *, uint32_t), uint32_t argc,
  * @brief wait for all workers to idle
  * @param core_idx cluster-local core index
  */
-inline void eu_run_empty(uint32_t core_idx) {
+static inline void eu_run_empty(uint32_t core_idx) {
   unsigned nfini, scratch;
   scratch = eu_p->e.nthreads;
   if (!scratch)
