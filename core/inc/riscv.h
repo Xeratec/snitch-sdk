@@ -22,6 +22,12 @@ static inline uint32_t snrt_mcycle() {
   return r;
 }
 
+static inline uint32_t snrt_minstret() {
+  uint32_t register r;
+  asm volatile("csrr %0, minstret" : "=r"(r) : : "memory");
+  return r;
+}
+
 /**
  * @brief Enable interrupt source irq
  * @details Enable interrupt, either wakes from wfi or if global interrupts are
