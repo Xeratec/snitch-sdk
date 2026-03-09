@@ -10,21 +10,22 @@ extern uint32_t snrt_cls_base_addr();
 
 #ifdef SNRT_INIT_TLS
 static inline void snrt_init_tls() {
-  extern volatile uint32_t __tdata_start, __tdata_end;
-  extern volatile uint32_t __tbss_start, __tbss_end;
+  /* Linker script symbols: use extern char[] (address token only). */
+  extern char __tdata_start[], __tdata_end[];
+  extern char __tbss_start[], __tbss_end[];
 
   size_t size;
-  volatile uint32_t tls_ptr;
+  uintptr_t tls_ptr;
 
   // To avoid contentions in main memory, and take advantage of the
   // bandwidth of the DMA, the DM core initializes the TLS section
   // for every core in a cluster.
   if (snrt_is_dm_core()) {
-    size = (size_t)(&__tdata_end) - (size_t)(&__tdata_start);
+    size = (uintptr_t)__tdata_end - (uintptr_t)__tdata_start;
 
     // First initialize the DM core's .tdata section from main memory
     asm volatile("mv %0, tp" : "=r"(tls_ptr) : :);
-    snrt_dma_start_1d((void *)tls_ptr, (void *)(&__tdata_start), size);
+    snrt_dma_start_1d((void *)tls_ptr, (void *)__tdata_start, size);
 
     // Then initialize all other cores' .tdata sections from the DM
     // core's. The offset between the TLS section of successive cores
@@ -37,7 +38,7 @@ static inline void snrt_init_tls() {
 
     // Initialize all cores' .tbss sections
     tls_ptr += size;
-    size = (size_t)(&__tbss_end) - (size_t)(&__tbss_start);
+    size = (uintptr_t)__tbss_end - (uintptr_t)__tbss_start;
     for (int i = 0; i < snrt_cluster_core_num(); i++) {
       snrt_dma_start_1d((void *)(tls_ptr + i * tls_offset),
                         (void *)(snrt_zero_memory_ptr()), size);
@@ -51,21 +52,23 @@ static inline void snrt_init_tls() {
 
 #ifdef SNRT_INIT_BSS
 static inline void snrt_init_bss() {
-  extern volatile uint32_t __bss_start, __bss_end;
+  /* Linker script symbols: use extern char[] (address token only). */
+  extern char __bss_start[], __bss_end[];
 
   // Only one core needs to perform the initialization
   if (snrt_cluster_idx() == 0 && snrt_is_dm_core()) {
-    size_t size = (size_t)(&__bss_end) - (size_t)(&__bss_start);
-    snrt_dma_start_1d_wideptr((uint64_t)(&__bss_start),
-                              (uint64_t)(snrt_zero_memory_ptr()), size);
+    size_t size = (uintptr_t)__bss_end - (uintptr_t)__bss_start;
+    snrt_dma_start_1d_wideptr((uint64_t)(uintptr_t)__bss_start,
+                              (uint64_t)(uintptr_t)(snrt_zero_memory_ptr()), size);
   }
 }
 #endif
 
 #ifdef SNRT_INIT_CLS
 static inline void snrt_init_cls() {
-  extern volatile uint32_t __cdata_start, __cdata_end;
-  extern volatile uint32_t __cbss_start, __cbss_end;
+  /* Linker script symbols: use extern char[] (address token only). */
+  extern char __cdata_start[], __cdata_end[];
+  extern char __cbss_start[], __cbss_end[];
 
   _cls_ptr = (cls_t *)snrt_cls_base_addr();
 
@@ -75,12 +78,12 @@ static inline void snrt_init_cls() {
     size_t size;
 
     // Copy cdata section to base of the TCDM
-    size = (size_t)(&__cdata_end) - (size_t)(&__cdata_start);
-    snrt_dma_start_1d(ptr, (void *)(&__cdata_start), size);
+    size = (uintptr_t)__cdata_end - (uintptr_t)__cdata_start;
+    snrt_dma_start_1d(ptr, (void *)__cdata_start, size);
 
     // Clear cbss section
-    ptr = (void *)((uint32_t)ptr + size);
-    size = (size_t)(&__cbss_end) - (size_t)(&__cbss_start);
+    ptr = (void *)((uintptr_t)ptr + size);
+    size = (uintptr_t)__cbss_end - (uintptr_t)__cbss_start;
     snrt_dma_start_1d(ptr, (void *)(snrt_zero_memory_ptr()), size);
   }
 }
