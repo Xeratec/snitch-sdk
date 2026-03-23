@@ -197,9 +197,6 @@ static inline void eu_exit(uint32_t core_idx) {
  * @param cluster_core_idx cluster-local core index
  */
 static inline void eu_event_loop(uint32_t cluster_core_idx) {
-  uint32_t scratch;
-  uint32_t nthds;
-
   // count number of workers in loop
   __atomic_add_fetch(&eu_p->workers_in_loop, 1, __ATOMIC_RELAXED);
 
@@ -228,7 +225,7 @@ static inline void eu_event_loop(uint32_t cluster_core_idx) {
       // make a local copy of nthreads to sync after work since the master
       // hart will reset eu_p->e.nthreads as soon as all workers finished
       // which might cause a race condition
-      nthds = eu_p->e.nthreads;
+      eu_p->e.nthreads;
       EU_PRINTF(0, "run fn @ %#x (arg 0 = %#x)\n", eu_p->e.fn,
                 ((uint32_t *)eu_p->e.data)[0]);
       // call
@@ -272,7 +269,7 @@ static inline int eu_dispatch_push(void (*fn)(void *, uint32_t), uint32_t argc,
  * @param core_idx cluster-local core index
  */
 static inline void eu_run_empty(uint32_t core_idx) {
-  unsigned nfini, scratch;
+  unsigned scratch;
   scratch = eu_p->e.nthreads;
   if (!scratch)
     return;

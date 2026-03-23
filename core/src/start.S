@@ -138,13 +138,13 @@ snrt.crt0.init_stack:
     # Compute the relative start address of the stack for each hart.
     # The stack for hart N starts at the end of the stack of hart N-1.
     sll       t0, a0, SNRT_LOG2_STACK_SIZE
-    
+
     # Initialize the stack pointer to the start of the stack
     sub       sp, a2, t0
 
     # Calculate the end of the stack, could be used by later routines
     # to calculate remaining TCDM space
-    sll       t1, a1, t2    
+    sll       t1, a1, t2
     sub       a2, a2, t1
 
     # Misalign stacks in the TCDM to reduce banking conflicts
@@ -250,7 +250,7 @@ __snrt_crt0_interrupt_handler:
     fsd     f30, 8(sp)
     fsd     f31, 0(sp)
     # state is stored, can now handle the interrupt
-1:  
+1:
     call    __snrt_isr
     # restore fp context
     csrr    t0, misa
@@ -315,5 +315,5 @@ __snrt_crt0_interrupt_handler:
 
 # HTIF sections
 .pushsection .htif,"aw",@progbits;
-.align 6; .global tohost; tohost: .dword 0;
-.align 6; .global fromhost; fromhost: .dword 0;
+.align 6; .global shared_data.device_to_host; shared_data.device_to_host: .dword 0;
+.align 6; .global shared_data.host_to_device; shared_data.host_to_device: .dword 0;

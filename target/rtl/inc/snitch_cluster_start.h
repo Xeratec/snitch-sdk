@@ -15,11 +15,11 @@
 #define SNRT_CRT0_POST_BARRIER
 #define SNRT_CRT0_EXIT
 
-extern volatile uint32_t tohost;
+extern volatile uint32_t shared_data.device_to_host;
 
 #ifndef OPENOCD_SEMIHOSTING
 static inline volatile uint32_t *snrt_exit_code_destination() {
-  return (volatile uint32_t *)&tohost;
+  return (volatile uint32_t *)&shared_data.device_to_host;
 }
 #endif
 

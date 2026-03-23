@@ -335,7 +335,6 @@ static inline void snrt_dma_wait_all() {
  * @param channel The index of the channel.
  */
 static inline void snrt_dma_wait_all_channel(uint32_t channel) {
-  register uint32_t tmp;
   // dmstati t0, 2  # 2=status.busy
   register uint32_t cfg asm("t1") = channel << 2 | 2;
   asm volatile("1: \n"
@@ -351,7 +350,6 @@ static inline void snrt_dma_wait_all_channel(uint32_t channel) {
  * @param num_channels The number of channels to wait on.
  */
 static inline void snrt_dma_wait_all_channels(uint32_t num_channels) {
-  register uint32_t tmp;
   // dmstati t0, 2  # 2=status.busy
   for (uint32_t c = 0; c < num_channels; c++) {
     snrt_dma_wait_all_channel(c);
@@ -397,8 +395,7 @@ static inline void snrt_dma_memset(void *ptr, uint8_t value, uint32_t len) {
   }
 
   // DMA copy the the rest
-  snrt_dma_txid_t memset_txid =
-      snrt_dma_start_2d(ptr, ptr, 64, 64, 0, len / 64);
+  snrt_dma_start_2d(ptr, ptr, 64, 64, 0, len / 64);
   snrt_dma_wait_all();
 }
 

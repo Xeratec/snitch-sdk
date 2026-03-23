@@ -25,7 +25,7 @@ void _putchar(char character) {
 }
 
 #else
-extern uintptr_t volatile tohost, fromhost;
+extern uintptr_t volatile shared_data.device_to_host, shared_data.host_to_device;
 
 // Rudimentary string buffer for putc calls.
 #define PUTC_BUFFER_LEN (1024 - sizeof(size_t))
@@ -55,10 +55,10 @@ void _putchar(char character) {
     buf->hdr.syscall_mem[3] = buf->hdr.size;         // length
 
     snrt_mutex_acquire(snrt_mutex());
-    tohost = (uintptr_t)buf->hdr.syscall_mem;
-    while (fromhost == 0)
+    shared_data.device_to_host = (uintptr_t)buf->hdr.syscall_mem;
+    while (shared_data.host_to_device == 0)
       ;
-    fromhost = 0;
+    shared_data.host_to_device = 0;
     snrt_mutex_release(snrt_mutex());
 
     buf->hdr.size = 0;
